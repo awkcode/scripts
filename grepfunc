@@ -1,0 +1,24 @@
+#! /usr/local/bin/lua
+
+-- check if the file exists 
+function file_exists(path)
+    local file = io.open(path, "rb")
+    if file then file:close() end
+    return file ~= nil
+end
+
+-- match the pattern of functions with grep
+function grep_it(filename)
+    -- double escape sequence to ignore lua escape char
+    cmd = "grep -niE '[[:graph:]]\\([[:print:]]*\\)' " .. filename 
+    os.execute(cmd)
+end
+
+
+
+-- start execution
+local target = "nil"
+if arg[1] then target = arg[1] end
+local source_path  = filename
+if file_exists(target) then grep_it(target)
+else print("Enter a proper source file to process") end 

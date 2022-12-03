@@ -1,0 +1,42 @@
+#!/bin/bash
+#
+# valnumt validate that input consist only of alphabetical and 
+# numeric characters
+
+valid_alpha_num()
+{
+	# validate args return 0 if all upper+lower case | digits and 1 if not 
+
+	# remove all unnacceptable chars
+	validchars="$(echo $1 | sed -e 's/[^[:alnum:]]//g')"
+
+	if [ "$validchars" = "$1" ] ; then
+		return 0
+	else 
+		return 1
+	fi
+}
+# other examples on sed usage :
+#require only uppercase letter and allowing space period and comma
+# sed 's/[^[:upper:] ,.]//g'
+
+#validate phone numbers : allowing integers spaces parentheses and dashes 
+#but not leading spaces or multiple space sequences
+# sed 's/[^- [:digit:]\(\)]//g'
+
+# BEGIN invocation --stand alone program 
+# comment everything below if included in another script
+echo -n "Enter Input: "
+read input
+
+#input validation
+if ! valid_alpha_num $input ; then
+	echo "please enter only letters and numbers" >&2
+	exit 1
+else
+	echo "INPUT IS VALID!"
+fi
+
+exit 0
+
+#script 2 

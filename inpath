@@ -1,0 +1,57 @@
+#!/bin/bash
+#
+# inpath is a script to check if a given executable is valid as is or 
+# can be found in the PATH env variables 
+
+in_path()
+{
+	# given command and path check if found and executable return 0
+	# if not return 1
+	cmd=$1
+	ourpath=$2
+	result=1
+
+	oldIFS=$IFS
+	IFS=":"
+
+	for directory in $ourpath
+	do
+		if [ -x $directory/$cmd ] ; then
+			result=0  #found the command
+		fi
+	done
+
+	IFS=$oldIFS
+	return $result
+}
+
+check_cmd_inpath()
+{
+	var=$1
+
+	if [ "$var" != "" ] ; then
+		if [ "${var:0:1}" = "/" ] ; then
+			if [ ! -x $var ] ; then
+				return 1
+			fi
+		elif ! in_path $var "$PATH" ; then
+			return 2
+		fi
+	fi
+	
+
+}
+
+if [ $# -ne 1 ] ; then 
+	echo "usage : $0 command" >&2
+	exit 1
+fi
+
+check_cmd_inpath "$1"
+case $? in
+	0 ) echo "$1 FOUND in path" ;;
+	1 ) echo "$1 not found or not executable" ;;
+	2 ) echo "$1 NOT found in path" ;;
+esac
+
+exit 0

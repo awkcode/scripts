@@ -1,0 +1,50 @@
+#!/bin/bash
+# normalize-date -- this script normalize month field in date specifications to three letters
+#	first letter is capitalized 
+#	exit with 0 if no error 
+
+month_num_to_name()
+{
+	# set the month variable to the appropriate value 
+	case $1 in 
+		1 ) month="Jan" ;;	2 ) month="Feb" ;;
+		3 ) month="Mar" ;;	4 ) month="Apr" ;;
+		5 ) month="May" ;;	6 ) month="Jun" ;;
+		7 ) month="Jul" ;;	8 ) month="Aug" ;;
+		9 ) month="Sep" ;;	10 ) month="Oct" ;;
+		11 ) month="Nov" ;;	12 ) month="Dec" ;;
+		* ) echo "unknown month value $1" >&2
+			exit 1
+	esac
+
+	return 0
+}
+
+#BEGIN MAIN SCRIPT -- COMMENT TO INCLUDE 
+
+#INPUT VALIDATION 
+if [ $# -ne 3 ] ; then
+	echo "usage : $0 month day year">&2
+	echo "formats are : March 10 2001 and 3 10 2001">&2
+	exit 1
+fi
+
+if [ $3 -le 99 ] ; then 
+	echo "expected a 4-digit year value." >&2
+	exit 1
+fi
+
+#is the month input format a number ?
+if [ -z $(echo $1 | sed -e 's/[[:digit:]]//g') ]; then
+      month_num_to_name $1
+else
+	#normalize the first three letters first upper and then lowercase.
+	month="$(echo $1|cut -c1|tr '[:lower:]' '[:upper:]')"
+	month="$month$(echo $1|cut -c2-3|tr '[:upper:]' '[:lower:]')"
+fi
+
+echo $month $2 $3 
+
+exit 0
+
+
